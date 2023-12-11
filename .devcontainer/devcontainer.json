@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/postgres
 {
-	"name": "Python 3 & PostgreSQL",
+	"name": "Odoo & PostgreSQL",
 	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
+	"service": "odoo",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	// Configure tool-specific properties.
 	"customizations": {
