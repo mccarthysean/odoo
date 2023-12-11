@@ -678,8 +678,14 @@ class ConnectionPool(object):
                 raise PoolError('The Connection Pool Is Full')
 
         try:
+            connection_factory=PsycoConnection
             result = psycopg2.connect(
-                connection_factory=PsycoConnection,
+                    host='db',
+                    port=5432,
+                    # dbname='postgres',
+                    user='postgres',
+                    password='postgres',
+                # connection_factory=PsycoConnection,
                 **connection_info)
         except psycopg2.Error:
             _logger.info('Connection to the database failed')
