@@ -6,6 +6,8 @@ ARG INSTALL_ODOO_VERSION=17
 # FROM odoo:${INSTALL_ODOO_VERSION}
 FROM docker.io/bitnami/odoo:${INSTALL_ODOO_VERSION}
 
+# Ensure the python output is sent straight
+# to the terminal without buffering it first
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
