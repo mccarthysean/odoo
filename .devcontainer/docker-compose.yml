@@ -2,34 +2,63 @@ version: '3.8'
 
 services:
   app:
+    # image: odoo:17
     build:
       context: ..
-      dockerfile: .devcontainer/Dockerfile
-
-    volumes:
-      - ../..:/workspaces:cached
-
+      dockerfile: .devcontainer/Dockerfile.dev
+    user: root
+    depends_on:
+      - db
+    # tty: true
+    # command: --
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
-
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
-
+    volumes:
+      - ../..:/workspaces:cached
+      # # pyproject.toml is required for Poetry to work properly.
+      # - ../pyproject.toml:/pyproject.toml:cached
+      # - ../poetry.lock:/poetry.lock:cached
+    # # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: service:db
+    networks:
+      odoo-dev-network:
+    ports:
+      # 8069 inside the container, 10016 outside the container
+      - localhost:10016:8069
+      # 8072 inside the container, 20016 outside the container
+      - localhost:20016:8072 # live chat
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+    environment: 
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: odoo
 
   db:
     image: postgres:latest
+    user: root
     restart: unless-stopped
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
+    #   # - /var/run/postgresql:/var/run/postgresql
+    networks:
+      odoo-dev-network:
     environment:
-      POSTGRES_USER: postgres
+      # POSTGRES_USER: postgres
+      # POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: postgres
-
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    ports:
+      # Dev server running in VS Code uses 5432,
+      # and the site can be accessed from 5444 outside the container
+      - localhost:5444:5432
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
-volumes:
-  postgres-data:
+# volumes:
+#   postgres-data:
+
+networks:
+  odoo-dev-network:
